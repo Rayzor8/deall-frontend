@@ -5,6 +5,8 @@ import {
   GridItem,
   Heading,
   Input,
+  Skeleton,
+  Stack,
   Table,
   TableContainer,
   Tbody,
@@ -15,8 +17,41 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import Head from "next/head";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../redux/slices/productSlice";
+import { AppDispatch, RootState } from "../redux/store";
 
 export default function Home() {
+  const {
+    page: { skip, limit, total },
+    data,
+    loading,
+  } = useSelector((state: RootState) => state.products);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const [counter, setCounter] = useState(1);
+  const perPage = 10;
+  const maxPage = total - perPage;
+
+  useEffect(() => {
+    dispatch(fetchProducts({ skip: skip, limit: limit }));
+  }, [dispatch, skip, limit]);
+
+  function prevPage() {
+    if (skip !== 0) {
+      dispatch(fetchProducts({ skip: skip - perPage, limit: limit }));
+      setCounter((prev) => prev - 1);
+    }
+  }
+
+  function nextPage() {
+    if (skip !== maxPage) {
+      dispatch(fetchProducts({ skip: skip + perPage, limit: limit }));
+      setCounter((prev) => prev + 1);
+    }
+  }
+
   return (
     <div>
       <Head>
@@ -43,60 +78,65 @@ export default function Home() {
         </GridItem>
 
         <GridItem colSpan={5}>
-          <TableContainer
-            border="2px"
-            borderColor="gray.300"
-            rounded="sm"
-            shadow="sm"
-          >
-            <Table variant="striped">
-              <Thead borderBottom="2px" borderColor="gray.300">
-                <Tr>
-                  <Th>Product Name</Th>
-                  <Th>Brand</Th>
-                  <Th>Price</Th>
-                  <Th>Stock</Th>
-                  <Th>Category</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td>inches</Td>
-                  <Td>millimetres (mm)</Td>
-                  <Td>25.4</Td>
-                  <Td>25.4</Td>
-                  <Td>25.4</Td>
-                </Tr>
-                <Tr>
-                  <Td>feet</Td>
-                  <Td>centimetres (cm)</Td>
-                  <Td>25.4</Td>
-                  <Td>25.4</Td>
-                  <Td>25.4</Td>
-                </Tr>
-                <Tr>
-                  <Td>yards</Td>
-                  <Td>metres (m)</Td>
-                  <Td>25.4</Td>
-                  <Td>25.4</Td>
-                  <Td>25.4</Td>
-                </Tr>
-              </Tbody>
-            </Table>
-          </TableContainer>
+          {!loading ? (
+            <TableContainer
+              border="2px"
+              borderColor="gray.300"
+              rounded="sm"
+              shadow="sm"
+            >
+              <Table variant="striped">
+                <Thead borderBottom="2px" borderColor="gray.300">
+                  <Tr>
+                    <Th>Product Name</Th>
+                    <Th>Brand</Th>
+                    <Th>Price</Th>
+                    <Th>Stock</Th>
+                    <Th>Category</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {data?.products.map((product) => (
+                    <Tr key={product.id}>
+                      <Td>{product.title}</Td>
+                      <Td>{product.brand}</Td>
+                      <Td>{product.price}</Td>
+                      <Td>{product.stock}</Td>
+                      <Td>{product.category}</Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Stack>
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+            </Stack>
+          )}
         </GridItem>
 
         <GridItem colStart={5}>
           <Flex gap={2}>
-            <Button colorScheme="gray" shadow="sm">
+            <Button colorScheme="gray" shadow="sm" onClick={prevPage}>
               Prev
             </Button>
 
             <Text sx={{ margin: "auto 0" }} w="20">
-              1 / 2 page
+              {counter} / {total / perPage}
             </Text>
 
-            <Button colorScheme="gray" shadow="sm">
+            <Button colorScheme="gray" shadow="sm" onClick={nextPage}>
               Next
             </Button>
           </Flex>
