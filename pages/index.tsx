@@ -1,17 +1,13 @@
 import {
-  Button,
-  Flex,
+  Box,
   Grid,
   GridItem,
   Heading,
   Input,
-  Skeleton,
-  Stack,
   Table,
   TableContainer,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
@@ -19,7 +15,14 @@ import {
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "../redux/slices/productSlice";
+import ChartProducts from "../components/ChartProducts";
+import Pagination from "../components/Pagination";
+import SkeletonLoader from "../components/SkeletonLoader";
+import {
+  counterDecrement,
+  counterIncrement,
+  fetchProducts,
+} from "../redux/slices/productSlice";
 import { AppDispatch, RootState } from "../redux/store";
 
 export default function Home() {
@@ -30,7 +33,6 @@ export default function Home() {
   } = useSelector((state: RootState) => state.products);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [counter, setCounter] = useState(1);
   const perPage = 10;
   const maxPage = total - perPage;
 
@@ -41,16 +43,18 @@ export default function Home() {
   function prevPage() {
     if (skip !== 0) {
       dispatch(fetchProducts({ skip: skip - perPage, limit: limit }));
-      setCounter((prev) => prev - 1);
+      dispatch(counterDecrement());
     }
   }
 
   function nextPage() {
     if (skip !== maxPage) {
       dispatch(fetchProducts({ skip: skip + perPage, limit: limit }));
-      setCounter((prev) => prev + 1);
+      dispatch(counterIncrement());
     }
   }
+
+  console.log(data);
 
   return (
     <div>
@@ -65,6 +69,10 @@ export default function Home() {
           <Heading as="h1" size="lg" noOfLines={1}>
             Product List Page
           </Heading>
+        </GridItem>
+
+        <GridItem colSpan={5}>
+          <ChartProducts />
         </GridItem>
 
         <GridItem colStart={5}>
@@ -109,37 +117,17 @@ export default function Home() {
               </Table>
             </TableContainer>
           ) : (
-            <Stack>
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-              <Skeleton height="40px" />
-            </Stack>
+            <SkeletonLoader length={12}  width="full"/>
           )}
         </GridItem>
 
         <GridItem colStart={5}>
-          <Flex gap={2}>
-            <Button colorScheme="gray" shadow="sm" onClick={prevPage}>
-              Prev
-            </Button>
-
-            <Text sx={{ margin: "auto 0" }} w="20">
-              {counter} / {total / perPage}
-            </Text>
-
-            <Button colorScheme="gray" shadow="sm" onClick={nextPage}>
-              Next
-            </Button>
-          </Flex>
+          <Pagination
+            total={total}
+            perPage={perPage}
+            prevPage={prevPage}
+            nextPage={nextPage}
+          />
         </GridItem>
       </Grid>
     </div>

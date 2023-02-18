@@ -1,4 +1,4 @@
-import { DataProducts} from "./../../types/index";
+import { DataProducts } from "./../../types/index";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -10,6 +10,7 @@ export interface ProductSlice {
     total: number;
   };
   loading: boolean;
+  counter: number;
 }
 
 type FetchProductsType = { skip: number; limit: number };
@@ -36,16 +37,23 @@ const initialState: ProductSlice = {
     total: 0,
   },
   loading: false,
+  counter: 1,
 };
 
 export const productSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
-    updatePage: (state, action) => {
+    counterDecrement: (state) => {
       return {
         ...state,
-        page: action.payload,
+        counter: state.counter - 1,
+      };
+    },
+    counterIncrement: (state) => {
+      return {
+        ...state,
+        counter: state.counter + 1,
       };
     },
   },
@@ -62,6 +70,6 @@ export const productSlice = createSlice({
   },
 });
 
-export const {} = productSlice.actions;
+export const { counterDecrement, counterIncrement } = productSlice.actions;
 
 export default productSlice.reducer;
