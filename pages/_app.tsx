@@ -21,7 +21,7 @@ const theme = extendTheme({ fonts });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <main className={inter.className}>
+    <div className={inter.className}>
       <ChakraProvider theme={theme}>
         <Layout>
           <Provider store={store}>
@@ -29,6 +29,6 @@ export default function App({ Component, pageProps }: AppProps) {
           </Provider>
         </Layout>
       </ChakraProvider>
-    </main>
+    </div>
   );
 }

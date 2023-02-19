@@ -56,7 +56,7 @@ const Carts = () => {
 
 
   return (
-    <Grid as="main" gap="4" templateColumns="repeat(5, 1fr)">
+    <Grid gap="4" templateColumns="repeat(5, 1fr)">
       <GridItem colSpan={5}>
         <Heading as="h1" size="lg" noOfLines={1}>
           Cart List Page

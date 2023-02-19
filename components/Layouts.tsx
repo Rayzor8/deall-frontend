@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <Sidebar />
       </GridItem>
       <GridItem colSpan={{ base: 6, lg: 4, xl: 5 }} as="main" p={{base:'20px',md:'40px'}}>
-        <main>{children}</main>
+        <section>{children}</section>
       </GridItem>
     </Grid>
   );

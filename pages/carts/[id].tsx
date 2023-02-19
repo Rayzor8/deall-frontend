@@ -45,7 +45,7 @@ export const getStaticProps = async (context: { params: { id: string } }) => {
 const CartDetails = ({ cart }: { cart: CartsItem }) => {
 
   return (
-    <Grid as="main" gap="12" templateColumns="repeat(5, 1fr)">
+    <Grid  gap="12" templateColumns="repeat(5, 1fr)">
       <GridItem colSpan={5}>
         <Heading as="h1" size="lg" noOfLines={1}>
           Cart {cart.id}
