@@ -1,21 +1,22 @@
 import {
-  Box,
   Grid,
   GridItem,
   Heading,
-  Input,
   Table,
+  TableCaption,
   TableContainer,
   Tbody,
   Td,
+  Tfoot,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ChartProducts from "../components/ChartProducts";
+import InputSearch from "../components/InputSearch";
 import Pagination from "../components/Pagination";
 import SkeletonLoader from "../components/SkeletonLoader";
 import {
@@ -30,6 +31,8 @@ export default function Home() {
     page: { skip, limit, total },
     data,
     loading,
+    searchQuery,
+    counter,
   } = useSelector((state: RootState) => state.products);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -54,7 +57,18 @@ export default function Home() {
     }
   }
 
-  console.log(data);
+  const filteredItems = useMemo(() => {
+    return data?.products.filter((product: any) => {
+      if (searchQuery) {
+        return product.title
+          .toString()
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+      } else {
+        return data;
+      }
+    });
+  }, [data, searchQuery]);
 
   return (
     <div>
@@ -76,13 +90,7 @@ export default function Home() {
         </GridItem>
 
         <GridItem colStart={5}>
-          <Input
-            placeholder="Search Product"
-            maxW="500px"
-            border="2px"
-            borderColor="gray.300"
-            shadow="sm"
-          />
+          <InputSearch />
         </GridItem>
 
         <GridItem colSpan={5}>
@@ -93,7 +101,7 @@ export default function Home() {
               rounded="sm"
               shadow="sm"
             >
-              <Table variant="striped">
+              <Table variant="simple">
                 <Thead borderBottom="2px" borderColor="gray.300">
                   <Tr>
                     <Th>Product Name</Th>
@@ -104,29 +112,35 @@ export default function Home() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data?.products.map((product) => (
+                  {filteredItems?.map((product) => (
                     <Tr key={product.id}>
                       <Td>{product.title}</Td>
                       <Td>{product.brand}</Td>
-                      <Td>{product.price}</Td>
+                      <Td>$ {product.price}</Td>
                       <Td>{product.stock}</Td>
                       <Td>{product.category}</Td>
                     </Tr>
                   ))}
                 </Tbody>
+                {!filteredItems?.length && (
+                  <TableCaption>No search results found</TableCaption>
+                )}
               </Table>
             </TableContainer>
           ) : (
-            <SkeletonLoader length={12}  width="full"/>
+            <SkeletonLoader length={12} width="full" />
           )}
         </GridItem>
 
         <GridItem colStart={5}>
           <Pagination
+            loading={loading}
             total={total}
             perPage={perPage}
             prevPage={prevPage}
             nextPage={nextPage}
+            counter={counter}
+            skip={skip}
           />
         </GridItem>
       </Grid>

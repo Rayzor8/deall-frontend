@@ -1,9 +1,9 @@
-import { DataProducts } from "./../../types/index";
+import { DataCarts } from './../../types/index';
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export interface ProductSlice {
-  data: DataProducts | null;
+export interface CartSlice {
+  data: DataCarts | null;
   page: {
     skip: number;
     limit: number;
@@ -11,17 +11,16 @@ export interface ProductSlice {
   };
   loading: boolean;
   counter: number;
-  searchQuery: string;
 }
 
-type FetchProductsType = { skip: number; limit: number };
+type FetchCartsType = { skip: number; limit: number };
 
-export const fetchProducts = createAsyncThunk(
-  "fetchProducts",
-  async ({ skip, limit }: FetchProductsType, { rejectWithValue }) => {
+export const fetchCarts = createAsyncThunk(
+  "fetchCarts",
+  async ({ skip, limit }: FetchCartsType, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(
-        `https://dummyjson.com/products?limit=${limit}&skip=${skip}`
+        `https://dummyjson.com/carts?limit=${limit}&skip=${skip}`
       );
       return data;
     } catch (error: any | unknown) {
@@ -30,7 +29,7 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
-const initialState: ProductSlice = {
+const initialState: CartSlice = {
   data: null,
   page: {
     skip: 0,
@@ -39,11 +38,10 @@ const initialState: ProductSlice = {
   },
   loading: false,
   counter: 1,
-  searchQuery: "",
 };
 
-export const productSlice = createSlice({
-  name: "products",
+export const cartSlice = createSlice({
+  name: "carts",
   initialState,
   reducers: {
     counterDecrement: (state) => {
@@ -58,19 +56,12 @@ export const productSlice = createSlice({
         counter: state.counter + 1,
       };
     },
-    setSearchQuery: (state, action) => {
-      // console.log(action.payload);
-      return {
-        ...state,
-        searchQuery: action.payload,
-      };
-    },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchProducts.pending, (state, _) => {
+    builder.addCase(fetchCarts.pending, (state, _) => {
       state.loading = true;
     });
-    builder.addCase(fetchProducts.fulfilled, (state, { payload }) => {
+    builder.addCase(fetchCarts.fulfilled, (state, { payload }) => {
       state.data = payload;
       state.page.total = payload.total;
       state.page.skip = payload.skip;
@@ -79,7 +70,7 @@ export const productSlice = createSlice({
   },
 });
 
-export const { counterDecrement, counterIncrement, setSearchQuery } =
-  productSlice.actions;
+export const { counterDecrement, counterIncrement } =
+cartSlice.actions;
 
-export default productSlice.reducer;
+export default cartSlice.reducer;

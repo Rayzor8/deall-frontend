@@ -44,7 +44,7 @@ const ChartProducts = () => {
     labels: brands ? brands : ["product 1", "product 2"],
     datasets: [
       {
-        label: "The number of items per Brand",
+        label: "Chart - Number of items per brand",
         data: values
           ? values.map((value: any) => {
               return value;
