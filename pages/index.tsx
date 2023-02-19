@@ -25,6 +25,7 @@ import {
   fetchProducts,
 } from "../redux/slices/productSlice";
 import { AppDispatch, RootState } from "../redux/store";
+import { ProductsItem } from "../types";
 
 export default function Home() {
   const {
@@ -58,12 +59,14 @@ export default function Home() {
   }
 
   const filteredItems = useMemo(() => {
-    return data?.products.filter((product: any) => {
+    return data?.products.filter((product: ProductsItem) => {
       if (searchQuery) {
-        return product.title
-          .toString()
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
+        return (
+          product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.price.toString().toLowerCase().includes(searchQuery) ||
+          product.category.toLowerCase().includes(searchQuery.toLowerCase())
+        );
       } else {
         return data;
       }
@@ -101,7 +104,7 @@ export default function Home() {
               rounded="sm"
               shadow="sm"
             >
-              <Table variant="simple">
+              <Table variant="striped">
                 <Thead borderBottom="2px" borderColor="gray.300">
                   <Tr>
                     <Th>Product Name</Th>

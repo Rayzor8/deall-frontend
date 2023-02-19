@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import Layout from "../components/Layouts";
 import { store } from "../redux/store";
 import { Provider } from "react-redux";
@@ -12,16 +12,23 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const fonts = {
+  heading: "var(--inter-font)",
+  body: "var(--inter-font)",
+};
+
+const theme = extendTheme({ fonts });
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ChakraProvider>
-      <main className={inter.className}>
+    <main className={inter.className}>
+      <ChakraProvider theme={theme}>
         <Layout>
           <Provider store={store}>
             <Component {...pageProps} />
           </Provider>
         </Layout>
-      </main>
-    </ChakraProvider>
+      </ChakraProvider>
+    </main>
   );
 }

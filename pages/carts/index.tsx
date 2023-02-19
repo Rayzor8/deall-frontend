@@ -1,4 +1,5 @@
 import {
+  Button,
   Grid,
   GridItem,
   Heading,
@@ -10,6 +11,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import Link from "next/link";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Pagination from "../../components/Pagination";
@@ -51,6 +53,8 @@ const Carts = () => {
     }
   }
 
+
+
   return (
     <Grid as="main" gap="4" templateColumns="repeat(5, 1fr)">
       <GridItem colSpan={5}>
@@ -67,22 +71,28 @@ const Carts = () => {
             rounded="sm"
             shadow="sm"
           >
-            <Table variant="simple">
+            <Table variant="striped">
               <Thead borderBottom="2px" borderColor="gray.300">
                 <Tr>
                   <Th>User Id</Th>
                   <Th>Total Products</Th>
                   <Th>Total Quantity</Th>
                   <Th>Total Amount</Th>
+                  <Th>Action</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {data?.carts?.map((cart) => (
-                  <Tr key={cart.id} cursor="pointer" _hover={{bg:'gray.200'}}>
+                  <Tr key={cart.id}>
                     <Td>{cart.userId}</Td>
                     <Td>{cart.totalProducts}</Td>
                     <Td>{cart.totalQuantity}</Td>
                     <Td>$ {cart.total}</Td>
+                    <Td>
+                      <Button size="xs" variant="outline" bg="gray.300" as={Link} href={`/carts/${cart.id}`}>
+                        Cart Detail
+                      </Button>
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>
